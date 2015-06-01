@@ -1,0 +1,1 @@
+RegExp.prototype.execAll=function(b){for(var a=null,c=[];a=this.exec(b);){var e=[];for(i in a)parseInt(i)==i&&e.push(a[i]);c.push(e)}return c};
