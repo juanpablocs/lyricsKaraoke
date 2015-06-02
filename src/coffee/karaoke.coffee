@@ -15,7 +15,7 @@ class jpKaraoke
 
   dom = {}
 
-  rows = 4
+  rows = 3
 
   str:
     cntKaraoke:"#karaoke"
@@ -27,6 +27,8 @@ class jpKaraoke
   _tmp:
     cntHeight:0
     lineHeight:0
+    scroll: 0
+    pos: 0
   
   #metodos
   catchDom: () ->
@@ -35,10 +37,20 @@ class jpKaraoke
     dom.lineKaraoke = $(self.str.lineKaraoke)
     dom.cntKaraokeLyric = $(self.str.cntKaraokeLyric)
     return
+  suscribeEvents: () ->
+    self = this
+    dom.cntKaraoke.on 'click', 'li', (e) ->
+      that = $(@)
+      currentTime = that.data('time')/1000
+      $("audio")[0].currentTime = currentTime
+      return
+    
+    return
   ready: () ->
     this.createTimeLine()
     this.bindHtmlViewKaraoke()
     this.bindStyleHtml()
+    this.suscribeEvents()
     console.log "ready"
     return
   
@@ -55,7 +67,7 @@ class jpKaraoke
     if(karaokesArray.length>0)
       $.each karaokesArray, (i, obj)->
         text = if(obj.text=="") then "" else "<p>"+obj.text+"</p>"
-        tmp.push "<li class='"+self.str.itemKaraoke.replace('.','')+" "+self.str.itemKaraokePos(i).replace('.','')+"'>"+text+"</li>"
+        tmp.push "<li class='"+self.str.itemKaraoke.replace('.','')+" "+self.str.itemKaraokePos(i).replace('.','')+"' data-time='"+obj.time+"'>"+text+"</li>"
         return
        dom.cntKaraoke.html(tmp.join(''))
     return
@@ -63,8 +75,6 @@ class jpKaraoke
     self = this
     pos = 0
     i = 0
-    heightMitad = self._tmp.cntHeight/2
-    lineHeight = self._tmp.lineHeight/2
     time += 500
     
     while i < karaokesArray.length
@@ -73,13 +83,7 @@ class jpKaraoke
       else
         break
       i++
-    itemKaraokePos = $(self.str.itemKaraokePos(pos))
-    $(self.str.itemKaraoke).removeClass('active')
-    itemKaraokePos.addClass('active')
-    dom.cntKaraoke.stop(true)
-    dom.cntKaraoke.scrollTo itemKaraokePos, 500,
-        offset: -heightMitad + (lineHeight - 10)
-        queue: !1
+    self.fn.scrollTop(self,pos)
     return
   
   createTimeLine:() ->
@@ -123,17 +127,49 @@ class jpKaraoke
       else
         r = 0
       return r*1000
+    scrollTop: (self,pos) ->
+      self._tmp.scroll++
+      if self._tmp.pos==pos
+        if(self._tmp.scroll>1)
+          console.log "libero scroll de "+pos
+        else
+          divCurrent = $(self.str.itemKaraokePos(pos))
+          top = (divCurrent[0].offsetTop) - self._tmp.cntHeight
+          console.log top
+          $(self.str.itemKaraoke).removeClass('active')
+          divCurrent.addClass('active')
+          dom.cntKaraoke.stop(true)
+          dom.cntKaraoke.animate({scrollTop: top }, 300)
+      else
+        self._tmp.pos = pos
+        self._tmp.scroll = 0
+        console.log "no es igual"
+
+      return
     
 #run
 karaoke = new jpKaraoke
 karaoke.ready()
 
-#funcionalidad con musica
-audio = new Audio("https://www.dropbox.com/s/yn3j0rduzho3uvj/bruno_mars_2.mp3?dl=1");
-audio.addEventListener 'timeupdate', (e)->
+
+# filemp3 = "https://www.dropbox.com/s/yn3j0rduzho3uvj/bruno_mars_2.mp3?dl=1"
+filemp3 = "src/mp3/bruno_mars_2.mp3"
+audio = $("<audio>")
+audio.attr('src', filemp3)
+audio.attr("controls", "controls")
+$("body").append(audio)
+audio[0].play()
+audio.on 'timeupdate', (e) ->
   timeCurrent = e.target.currentTime * 1000
   karaoke.controlKaraoke(timeCurrent);
   return
-audio.play()
+
+#funcionalidad con musica
+# audio = new Audio(filemp3);
+# audio.addEventListener 'timeupdate', (e)->
+#   timeCurrent = e.target.currentTime * 1000
+#   karaoke.controlKaraoke(timeCurrent);
+#   return
+# audio.play()
 
 #test
