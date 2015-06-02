@@ -4,6 +4,7 @@ var gulp    = require('gulp'),
     concat  = require('gulp-concat');
     plumber  = require('gulp-plumber');
     coffee  = require('gulp-coffee');
+    recursiveConcat  = require('gulp-recursive-concat');
 
 var path = {
       src:{
@@ -22,12 +23,14 @@ var path = {
 gulp.task('js', function () {
     gulp.src(path.src.js.origin)
         .pipe(uglify())
-        .pipe(concat('lyricskaraoke.min.js'))
+        .pipe(recursiveConcat({dist: path.src.js.destiny, extname: '.js'}))
+        .pipe(concat('x.min.js'))
         .pipe(gulp.dest(path.src.js.destiny));
 });
 gulp.task('coffee', function() {
     gulp.src(path.src.coffee.origin)
         .pipe(plumber())
+        .pipe(recursiveConcat({dist: path.src.coffee.destiny, extname: '.coffee'}))
         .pipe(coffee({bare: true}).on('error', function(err){
             console.log('');
             console.log(err.name + " in " + err.plugin);
