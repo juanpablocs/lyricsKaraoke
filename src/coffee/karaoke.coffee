@@ -9,7 +9,7 @@ class jpKaraoke
   regexParseAll = /\[(\d{1,2}:[\d.]+)\]([^\[]+)?/g
 
   # keys (1,2)
-  regexParseTime = /^\[(\d*)\:(.*)\]/i
+  regexParseTime = /^(\d*)\:(.*)/i
 
   karaokesArray = []
 
@@ -54,7 +54,6 @@ class jpKaraoke
     tmp = []
     if(karaokesArray.length>0)
       $.each karaokesArray, (i, obj)->
-        console.log obj
         text = if(obj.text=="") then "" else "<p>"+obj.text+"</p>"
         tmp.push "<li class='"+self.str.itemKaraoke.replace('.','')+" "+self.str.itemKaraokePos(i).replace('.','')+"'>"+text+"</li>"
         return
@@ -102,7 +101,6 @@ class jpKaraoke
       if(scrapping.length>0)
         n = 0
         tmp = ""
-        #console.log scrapping
         while n < scrapping.length
           data = scrapping[scrapping.length - (n + 1)]
           if typeof data[2] != 'undefined'
@@ -110,7 +108,7 @@ class jpKaraoke
         
           name = if typeof data[2] == 'undefined' then tmp else data[2]
           karaokesArray.push
-            time: self.fn.parseTimeLrc(data[1])
+            time: self.parseTimeLrc(data[1])
             time_parsed: data[1]
             text: name
           n++
@@ -124,7 +122,7 @@ class jpKaraoke
         r = (parseInt(time[1])*60) + parseInt(time[2])
       else
         r = 0
-      return r
+      return r*1000
     
 #run
 karaoke = new jpKaraoke

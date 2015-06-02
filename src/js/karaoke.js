@@ -11,7 +11,7 @@ jpKaraoke = (function() {
 
   regexParseAll = /\[(\d{1,2}:[\d.]+)\]([^\[]+)?/g;
 
-  regexParseTime = /^\[(\d*)\:(.*)\]/i;
+  regexParseTime = /^(\d*)\:(.*)/i;
 
   karaokesArray = [];
 
@@ -67,7 +67,6 @@ jpKaraoke = (function() {
     if (karaokesArray.length > 0) {
       $.each(karaokesArray, function(i, obj) {
         var text;
-        console.log(obj);
         text = obj.text === "" ? "" : "<p>" + obj.text + "</p>";
         tmp.push("<li class='" + self.str.itemKaraoke.replace('.', '') + " " + self.str.itemKaraokePos(i).replace('.', '') + "'>" + text + "</li>");
       });
@@ -129,7 +128,7 @@ jpKaraoke = (function() {
           }
           name = typeof data[2] === 'undefined' ? tmp : data[2];
           karaokesArray.push({
-            time: self.fn.parseTimeLrc(data[1]),
+            time: self.parseTimeLrc(data[1]),
             time_parsed: data[1],
             text: name
           });
@@ -154,7 +153,7 @@ jpKaraoke = (function() {
       } else {
         r = 0;
       }
-      return r;
+      return r * 1000;
     }
   };
 
