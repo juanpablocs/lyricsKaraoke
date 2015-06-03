@@ -1,12 +1,12 @@
 RegExp.prototype.execAll=function(b){for(var a=null,c=[];a=this.exec(b);){var e=[];for(i in a)parseInt(i)==i&&e.push(a[i]);c.push(e)}return c};
 
 /* created by @juanpablocs21 */
-var audio, filemp3, jpKaraoke, karaoke;
+var karaoke;
 
-jpKaraoke = (function() {
-  var dom, karaokesArray, regexParseAll, regexParseTime, rows, version;
+karaoke = (function() {
+  var debug, dom, karaokesArray, log, regexParseAll, regexParseTime, rows, version;
 
-  function jpKaraoke() {}
+  function karaoke() {}
 
   version = 1.0;
 
@@ -20,7 +20,9 @@ jpKaraoke = (function() {
 
   rows = 3;
 
-  jpKaraoke.prototype.str = {
+  debug = true;
+
+  karaoke.prototype.str = {
     cntKaraoke: "#karaoke",
     lineKaraoke: "#karaoke li p",
     cntKaraokeLyric: "#karaokeText",
@@ -30,14 +32,15 @@ jpKaraoke = (function() {
     }
   };
 
-  jpKaraoke.prototype._tmp = {
+  karaoke.prototype._tmp = {
     cntHeight: 0,
     lineHeight: 0,
     scroll: 0,
-    pos: 0
+    pos: 0,
+    viewLyric: null
   };
 
-  jpKaraoke.prototype.catchDom = function() {
+  karaoke.prototype.catchDom = function() {
     var self;
     self = this;
     dom.cntKaraoke = $(self.str.cntKaraoke);
@@ -45,7 +48,7 @@ jpKaraoke = (function() {
     dom.cntKaraokeLyric = $(self.str.cntKaraokeLyric);
   };
 
-  jpKaraoke.prototype.suscribeEvents = function() {
+  karaoke.prototype.suscribeEvents = function() {
     var self;
     self = this;
     dom.cntKaraoke.on('click', 'li', function(e) {
@@ -56,15 +59,15 @@ jpKaraoke = (function() {
     });
   };
 
-  jpKaraoke.prototype.ready = function() {
-    this.createTimeLine();
+  karaoke.prototype.karaokeInit = function(op, lyric) {
+    this._tmp.viewLyric = op;
+    this.prepareKaraoke(lyric);
     this.bindHtmlViewKaraoke();
     this.bindStyleHtml();
     this.suscribeEvents();
-    console.log("ready");
   };
 
-  jpKaraoke.prototype.bindStyleHtml = function() {
+  karaoke.prototype.bindStyleHtml = function() {
     var self;
     self = this;
     self.catchDom();
@@ -75,21 +78,23 @@ jpKaraoke = (function() {
     }, 500);
   };
 
-  jpKaraoke.prototype.bindHtmlViewKaraoke = function() {
+  karaoke.prototype.bindHtmlViewKaraoke = function() {
     var self, tmp;
     self = this;
     tmp = [];
     if (karaokesArray.length > 0) {
       $.each(karaokesArray, function(i, obj) {
-        var text;
+        var itmcls, itmcls2, text;
         text = obj.text === "" ? "" : "<p>" + obj.text + "</p>";
-        tmp.push("<li class='" + self.str.itemKaraoke.replace('.', '') + " " + self.str.itemKaraokePos(i).replace('.', '') + "' data-time='" + obj.time + "'>" + text + "</li>");
+        itmcls = self.str.itemKaraoke.replace('.', '');
+        itmcls2 = self.str.itemKaraokePos(i).replace('.', '');
+        tmp.push("<li class='" + itmcls + " " + itmcls2 + "' data-time='" + obj.time + "'>" + text + "</li>");
       });
       dom.cntKaraoke.html(tmp.join(''));
     }
   };
 
-  jpKaraoke.prototype.controlKaraoke = function(time) {
+  karaoke.prototype.controlKaraoke = function(time) {
     var i, pos, self;
     self = this;
     pos = 0;
@@ -106,11 +111,10 @@ jpKaraoke = (function() {
     self.fn.scrollTop(self, pos);
   };
 
-  jpKaraoke.prototype.createTimeLine = function() {
-    var l, lines, lyric, self;
+  karaoke.prototype.prepareKaraoke = function(lyric) {
+    var l, lines, self;
     self = this;
     self.catchDom();
-    lyric = dom.cntKaraokeLyric.text();
     lines = lyric.split(/\n/g);
     l = 0;
     while (l < lines.length) {
@@ -119,7 +123,15 @@ jpKaraoke = (function() {
     }
   };
 
-  jpKaraoke.prototype.fn = {
+  log = function(msg) {
+    if (debug) {
+      if (typeof console !== "undefined" && console !== null) {
+        console.log(msg);
+      }
+    }
+  };
+
+  karaoke.prototype.fn = {
     timeLine: function(line) {
       var data, n, name, scrapping, self, tmp;
       self = this;
@@ -169,7 +181,13 @@ jpKaraoke = (function() {
           console.log("libero scroll de " + pos);
         } else {
           divCurrent = $(self.str.itemKaraokePos(pos));
-          top = divCurrent[0].offsetTop - self._tmp.cntHeight;
+          log(self._tmp);
+          if (self._tmp.viewLyric === "normal") {
+            top = divCurrent[0].offsetTop - 80;
+            dom.cntKaraoke.css('overflow', 'hidden');
+          } else {
+            top = divCurrent[0].offsetTop - self._tmp.cntHeight;
+          }
           console.log(top);
           $(self.str.itemKaraoke).removeClass('active');
           divCurrent.addClass('active');
@@ -186,28 +204,103 @@ jpKaraoke = (function() {
     }
   };
 
-  return jpKaraoke;
+  return karaoke;
 
 })();
 
-karaoke = new jpKaraoke;
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty,
+  slice = [].slice;
 
-karaoke.ready();
+(function($, window) {
+  var lyricsKaraoke;
+  lyricsKaraoke = (function(superClass) {
+    var audio, identity;
 
-filemp3 = "src/mp3/bruno_mars_2.mp3";
+    extend(lyricsKaraoke, superClass);
 
-audio = $("<audio>");
+    lyricsKaraoke.prototype.defaults = {
+      setFileMP3: null,
+      setFileLRC: null,
+      viewLyric: 'normal',
+      onStreamingPlayer: function() {},
+      onErrorMP3: function() {},
+      onErrorLRC: function() {}
+    };
 
-audio.attr('src', filemp3);
+    identity = "lyricsKaraoke" + Math.floor(Math.random() * 99999);
 
-audio.attr("controls", "controls");
+    audio = null;
 
-$("body").append(audio);
+    function lyricsKaraoke(el, options) {
+      this.options = $.extend({}, this.defaults, options);
+      this.el = $(el);
+      this.createPlayer();
+      this.karaokeInit(this.options.viewLyric, this.el.text());
+      return;
+    }
 
-audio[0].play();
+    lyricsKaraoke.prototype.pause = function() {
+      if (audio) {
+        audio[0].pause();
+      } else {
+        this.log("error no playing");
+      }
+    };
 
-audio.on('timeupdate', function(e) {
-  var timeCurrent;
-  timeCurrent = e.target.currentTime * 1000;
-  karaoke.controlKaraoke(timeCurrent);
-});
+    lyricsKaraoke.prototype.play = function() {
+      if (audio) {
+        audio[0].play();
+      } else {
+        this.log("error no playing");
+      }
+    };
+
+    lyricsKaraoke.prototype.seek = function(time) {
+      this.controlKaraoke(time);
+    };
+
+    lyricsKaraoke.prototype.test = function(message) {
+      this.log(this.options.paramA + message);
+    };
+
+    lyricsKaraoke.prototype.createPlayer = function() {
+      var self;
+      self = this;
+      audio = $("<audio>");
+      audio.attr({
+        "src": this.options.setFileMP3,
+        "controls": "controls",
+        "id": identity
+      });
+      audio.on("timeupdate", function(e) {
+        var timeCurrent;
+        self.options.onStreamingPlayer(e);
+        timeCurrent = e.target.currentTime * 1000;
+        self.controlKaraoke(timeCurrent);
+      });
+      audio.on("error", this.onErrorMP3);
+      $("body").append(audio);
+    };
+
+    return lyricsKaraoke;
+
+  })(karaoke);
+  return $.fn.extend({
+    lyricsKaraoke: function() {
+      var args, option;
+      option = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+      this.each(function() {
+        var $this, data;
+        $this = $(this);
+        data = $this.data('lyricsKaraoke');
+        if (!data) {
+          $this.data('lyricsKaraoke', (data = new lyricsKaraoke(this, option)));
+        }
+        if (typeof option === 'string') {
+          return data[option].apply(data, args);
+        }
+      });
+    }
+  });
+})(window.jQuery, window);

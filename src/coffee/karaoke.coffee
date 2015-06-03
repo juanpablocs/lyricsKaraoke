@@ -1,6 +1,7 @@
 ### created by @juanpablocs21 ###
+
 # reference: http://lrcgenerator.com/sync.js?20140905
-class jpKaraoke
+class karaoke
 
   #variables
   version = 1.0
@@ -17,19 +18,21 @@ class jpKaraoke
 
   rows = 3
 
+  debug = true
+
   str:
     cntKaraoke:"#karaoke"
     lineKaraoke: "#karaoke li p"
     cntKaraokeLyric: "#karaokeText"
     itemKaraoke: ".karaoke"
     itemKaraokePos: (pos)->
-      return ".karaoke_"+pos
+      return ".karaoke_#{pos}"
   _tmp:
     cntHeight:0
     lineHeight:0
     scroll: 0
     pos: 0
-  
+    viewLyric: null
   #metodos
   catchDom: () ->
     self = this
@@ -44,14 +47,14 @@ class jpKaraoke
       currentTime = that.data('time')/1000
       $("audio")[0].currentTime = currentTime
       return
-    
+
     return
-  ready: () ->
-    this.createTimeLine()
+  karaokeInit: (op, lyric) ->
+    this._tmp.viewLyric = op
+    this.prepareKaraoke(lyric)
     this.bindHtmlViewKaraoke()
     this.bindStyleHtml()
     this.suscribeEvents()
-    console.log "ready"
     return
   
   bindStyleHtml: () ->
@@ -67,7 +70,9 @@ class jpKaraoke
     if(karaokesArray.length>0)
       $.each karaokesArray, (i, obj)->
         text = if(obj.text=="") then "" else "<p>"+obj.text+"</p>"
-        tmp.push "<li class='"+self.str.itemKaraoke.replace('.','')+" "+self.str.itemKaraokePos(i).replace('.','')+"' data-time='"+obj.time+"'>"+text+"</li>"
+        itmcls = self.str.itemKaraoke.replace('.','')
+        itmcls2 = self.str.itemKaraokePos(i).replace('.','')
+        tmp.push "<li class='#{itmcls} #{itmcls2}' data-time='#{obj.time}'>#{text}</li>"
         return
        dom.cntKaraoke.html(tmp.join(''))
     return
@@ -86,17 +91,19 @@ class jpKaraoke
     self.fn.scrollTop(self,pos)
     return
   
-  createTimeLine:() ->
+  prepareKaraoke:(lyric) ->
     self = this
     self.catchDom()
-    lyric = dom.cntKaraokeLyric.text()
-    lines = lyric.split(/\n/g);
+    lines = lyric.split(/\n/g)
     l = 0
     while l < lines.length
       self.fn.timeLine(lines[l])
       l++
     return
-  
+
+  log = (msg) ->
+    console?.log msg if debug
+    return
   fn:
     timeLine:(line) ->
       #console.log line
@@ -134,7 +141,13 @@ class jpKaraoke
           console.log "libero scroll de "+pos
         else
           divCurrent = $(self.str.itemKaraokePos(pos))
-          top = (divCurrent[0].offsetTop) - self._tmp.cntHeight
+          log self._tmp
+          if(self._tmp.viewLyric=="normal")
+            top = divCurrent[0].offsetTop - 80
+            dom.cntKaraoke.css('overflow','hidden')
+          else
+            top = (divCurrent[0].offsetTop) - self._tmp.cntHeight
+          
           console.log top
           $(self.str.itemKaraoke).removeClass('active')
           divCurrent.addClass('active')
@@ -146,30 +159,3 @@ class jpKaraoke
         console.log "no es igual"
 
       return
-    
-#run
-karaoke = new jpKaraoke
-karaoke.ready()
-
-
-# filemp3 = "https://www.dropbox.com/s/yn3j0rduzho3uvj/bruno_mars_2.mp3?dl=1"
-filemp3 = "src/mp3/bruno_mars_2.mp3"
-audio = $("<audio>")
-audio.attr('src', filemp3)
-audio.attr("controls", "controls")
-$("body").append(audio)
-audio[0].play()
-audio.on 'timeupdate', (e) ->
-  timeCurrent = e.target.currentTime * 1000
-  karaoke.controlKaraoke(timeCurrent);
-  return
-
-#funcionalidad con musica
-# audio = new Audio(filemp3);
-# audio.addEventListener 'timeupdate', (e)->
-#   timeCurrent = e.target.currentTime * 1000
-#   karaoke.controlKaraoke(timeCurrent);
-#   return
-# audio.play()
-
-#test

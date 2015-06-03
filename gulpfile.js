@@ -52,6 +52,6 @@ gulp.task('default', function(){
   gulp.run(['coffee','js']); 
 });
 gulp.task('watch', function () {
-  gulp.watch(path.src.coffee.origin, ['coffee']);
+  gulp.watch([path.src.coffee.origin], ['coffee']);
   gulp.watch(path.src.js.origin, ['js']);
 });

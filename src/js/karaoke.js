@@ -1,11 +1,11 @@
 
 /* created by @juanpablocs21 */
-var audio, filemp3, jpKaraoke, karaoke;
+var karaoke;
 
-jpKaraoke = (function() {
-  var dom, karaokesArray, regexParseAll, regexParseTime, rows, version;
+karaoke = (function() {
+  var debug, dom, karaokesArray, log, regexParseAll, regexParseTime, rows, version;
 
-  function jpKaraoke() {}
+  function karaoke() {}
 
   version = 1.0;
 
@@ -19,7 +19,9 @@ jpKaraoke = (function() {
 
   rows = 3;
 
-  jpKaraoke.prototype.str = {
+  debug = true;
+
+  karaoke.prototype.str = {
     cntKaraoke: "#karaoke",
     lineKaraoke: "#karaoke li p",
     cntKaraokeLyric: "#karaokeText",
@@ -29,14 +31,15 @@ jpKaraoke = (function() {
     }
   };
 
-  jpKaraoke.prototype._tmp = {
+  karaoke.prototype._tmp = {
     cntHeight: 0,
     lineHeight: 0,
     scroll: 0,
-    pos: 0
+    pos: 0,
+    viewLyric: null
   };
 
-  jpKaraoke.prototype.catchDom = function() {
+  karaoke.prototype.catchDom = function() {
     var self;
     self = this;
     dom.cntKaraoke = $(self.str.cntKaraoke);
@@ -44,7 +47,7 @@ jpKaraoke = (function() {
     dom.cntKaraokeLyric = $(self.str.cntKaraokeLyric);
   };
 
-  jpKaraoke.prototype.suscribeEvents = function() {
+  karaoke.prototype.suscribeEvents = function() {
     var self;
     self = this;
     dom.cntKaraoke.on('click', 'li', function(e) {
@@ -55,15 +58,15 @@ jpKaraoke = (function() {
     });
   };
 
-  jpKaraoke.prototype.ready = function() {
-    this.createTimeLine();
+  karaoke.prototype.karaokeInit = function(op, lyric) {
+    this._tmp.viewLyric = op;
+    this.prepareKaraoke(lyric);
     this.bindHtmlViewKaraoke();
     this.bindStyleHtml();
     this.suscribeEvents();
-    console.log("ready");
   };
 
-  jpKaraoke.prototype.bindStyleHtml = function() {
+  karaoke.prototype.bindStyleHtml = function() {
     var self;
     self = this;
     self.catchDom();
@@ -74,21 +77,23 @@ jpKaraoke = (function() {
     }, 500);
   };
 
-  jpKaraoke.prototype.bindHtmlViewKaraoke = function() {
+  karaoke.prototype.bindHtmlViewKaraoke = function() {
     var self, tmp;
     self = this;
     tmp = [];
     if (karaokesArray.length > 0) {
       $.each(karaokesArray, function(i, obj) {
-        var text;
+        var itmcls, itmcls2, text;
         text = obj.text === "" ? "" : "<p>" + obj.text + "</p>";
-        tmp.push("<li class='" + self.str.itemKaraoke.replace('.', '') + " " + self.str.itemKaraokePos(i).replace('.', '') + "' data-time='" + obj.time + "'>" + text + "</li>");
+        itmcls = self.str.itemKaraoke.replace('.', '');
+        itmcls2 = self.str.itemKaraokePos(i).replace('.', '');
+        tmp.push("<li class='" + itmcls + " " + itmcls2 + "' data-time='" + obj.time + "'>" + text + "</li>");
       });
       dom.cntKaraoke.html(tmp.join(''));
     }
   };
 
-  jpKaraoke.prototype.controlKaraoke = function(time) {
+  karaoke.prototype.controlKaraoke = function(time) {
     var i, pos, self;
     self = this;
     pos = 0;
@@ -105,11 +110,10 @@ jpKaraoke = (function() {
     self.fn.scrollTop(self, pos);
   };
 
-  jpKaraoke.prototype.createTimeLine = function() {
-    var l, lines, lyric, self;
+  karaoke.prototype.prepareKaraoke = function(lyric) {
+    var l, lines, self;
     self = this;
     self.catchDom();
-    lyric = dom.cntKaraokeLyric.text();
     lines = lyric.split(/\n/g);
     l = 0;
     while (l < lines.length) {
@@ -118,7 +122,15 @@ jpKaraoke = (function() {
     }
   };
 
-  jpKaraoke.prototype.fn = {
+  log = function(msg) {
+    if (debug) {
+      if (typeof console !== "undefined" && console !== null) {
+        console.log(msg);
+      }
+    }
+  };
+
+  karaoke.prototype.fn = {
     timeLine: function(line) {
       var data, n, name, scrapping, self, tmp;
       self = this;
@@ -168,7 +180,13 @@ jpKaraoke = (function() {
           console.log("libero scroll de " + pos);
         } else {
           divCurrent = $(self.str.itemKaraokePos(pos));
-          top = divCurrent[0].offsetTop - self._tmp.cntHeight;
+          log(self._tmp);
+          if (self._tmp.viewLyric === "normal") {
+            top = divCurrent[0].offsetTop - 80;
+            dom.cntKaraoke.css('overflow', 'hidden');
+          } else {
+            top = divCurrent[0].offsetTop - self._tmp.cntHeight;
+          }
           console.log(top);
           $(self.str.itemKaraoke).removeClass('active');
           divCurrent.addClass('active');
@@ -185,28 +203,6 @@ jpKaraoke = (function() {
     }
   };
 
-  return jpKaraoke;
+  return karaoke;
 
 })();
-
-karaoke = new jpKaraoke;
-
-karaoke.ready();
-
-filemp3 = "src/mp3/bruno_mars_2.mp3";
-
-audio = $("<audio>");
-
-audio.attr('src', filemp3);
-
-audio.attr("controls", "controls");
-
-$("body").append(audio);
-
-audio[0].play();
-
-audio.on('timeupdate', function(e) {
-  var timeCurrent;
-  timeCurrent = e.target.currentTime * 1000;
-  karaoke.controlKaraoke(timeCurrent);
-});
