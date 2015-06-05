@@ -296,7 +296,7 @@ var extend = function(child, parent) { for (var key in parent) { if (hasProp.cal
         self.controlKaraoke(timeCurrent);
       });
       audio.on("error", this.onErrorMP3);
-      $("body").append(audio);
+      audio.insertAfter(this.el);
     };
 
     return lyricsKaraoke;

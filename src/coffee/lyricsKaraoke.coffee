@@ -64,7 +64,7 @@ do($ = window.jQuery, window) ->
 				self.controlKaraoke(timeCurrent)
 				return
 			audio.on "error", @onErrorMP3
-			$("body").append(audio)
+			audio.insertAfter(@el)
 			return
 	# 
 	# Define the plugin
