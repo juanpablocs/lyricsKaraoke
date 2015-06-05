@@ -135,12 +135,14 @@ a {
   .main-content pre > code {
     padding: 0;
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #567482;
     word-break: normal;
     white-space: pre;
     background: transparent;
-    border: 0; }
+    border: 0;
+    line-height: 20px !important;
+   }
 .main-content .highlight {
   margin-bottom: 1rem; }
   .main-content .highlight pre {
@@ -243,3 +245,52 @@ a {
 @media screen and (max-width: 42em) {
   .site-footer {
     font-size: 0.9rem; } }
+
+
+#karaoke{
+  width: 96%;
+  margin: 5px auto;
+  height:  100px;
+  background: rgba(0,0,0,0.2);
+  padding:5px;
+  border-radius: 5px;
+  padding: 10px 0;
+  margin-bottom: 25px;
+}
+
+#karaoke.view-scroll{
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#karaoke.view-normal{
+  overflow:  hidden;
+}
+#karaoke li {
+  width: 100%;
+  min-height: 38px;
+  padding: 0px 2%;
+  list-style: none;
+  text-align: center;
+  cursor:pointer;
+  margin: 0 auto;
+}
+#karaoke li:hover{
+  background-color: rgba(0,0,0,0.3);
+}
+#karaoke li.active{
+  cursor:  inherit;
+}
+#karaoke li.active:hover{
+  background-color: transparent;
+}
+#karaoke li.active p {
+  background: #C7F0D7;
+  color: #444;
+}
+#karaoke li p {
+  padding: 10px 20px;
+  border-radius: 30px;
+  display: inline-block;
+  margin: 0 auto;
+  font-size: 18px;
+}
