@@ -195,7 +195,7 @@ karaoke = (function() {
         } else {
           divCurrent = $(self.str.itemKaraokePos(pos));
           if (self._tmp.viewLyric === "normal") {
-            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - divCurrent[0].offsetHeight * 2;
+            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - (divCurrent.outerHeight() + 20);
           } else {
             self._tmp.top_current["scroll"] = divCurrent[0].offsetTop - self._tmp.cntHeight;
           }
