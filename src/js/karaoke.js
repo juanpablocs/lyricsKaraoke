@@ -24,7 +24,6 @@ karaoke = (function() {
   karaoke.prototype.str = {
     cntKaraoke: "#karaoke",
     lineKaraoke: "#karaoke li p",
-    cntKaraokeLyric: "#karaokeText",
     itemKaraoke: ".karaoke",
     itemKaraokePos: function(pos) {
       return ".karaoke_" + pos;
@@ -36,7 +35,8 @@ karaoke = (function() {
     lineHeight: 0,
     scroll: 0,
     pos: 0,
-    viewLyric: null
+    viewLyric: null,
+    top_current: []
   };
 
   karaoke.prototype.catchDom = function() {
@@ -64,6 +64,7 @@ karaoke = (function() {
     this.bindHtmlViewKaraoke();
     this.bindStyleHtml();
     this.suscribeEvents();
+    this.setViewLyricLayoutAction(op);
   };
 
   karaoke.prototype.bindStyleHtml = function() {
@@ -122,6 +123,18 @@ karaoke = (function() {
     }
   };
 
+  karaoke.prototype.setViewLyricLayoutAction = function(op) {
+    var self;
+    self = this;
+    switch (op) {
+      case "view-scroll":
+        dom.cntKaraoke.attr('class', 'view-scroll');
+        break;
+      default:
+        dom.cntKaraoke.attr('class', 'view-normal');
+    }
+  };
+
   karaoke.prototype.log = function(msg) {
     if (debug) {
       if (typeof console !== "undefined" && console !== null) {
@@ -173,26 +186,24 @@ karaoke = (function() {
       return r * 1000;
     },
     scrollTop: function(self, pos) {
-      var divCurrent, top;
+      var divCurrent;
       self._tmp.scroll++;
       if (self._tmp.pos === pos) {
         if (self._tmp.scroll > 1) {
           console.log("libero scroll de " + pos);
         } else {
           divCurrent = $(self.str.itemKaraokePos(pos));
-          log(self._tmp);
           if (self._tmp.viewLyric === "normal") {
-            top = divCurrent[0].offsetTop - 80;
-            dom.cntKaraoke.css('overflow', 'hidden');
+            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - 80;
           } else {
-            top = divCurrent[0].offsetTop - self._tmp.cntHeight;
+            self._tmp.top_current["scroll"] = divCurrent[0].offsetTop - self._tmp.cntHeight;
           }
           console.log(top);
           $(self.str.itemKaraoke).removeClass('active');
           divCurrent.addClass('active');
           dom.cntKaraoke.stop(true);
           dom.cntKaraoke.animate({
-            scrollTop: top
+            scrollTop: self._tmp.top_current[self._tmp.viewLyric]
           }, 300);
         }
       } else {

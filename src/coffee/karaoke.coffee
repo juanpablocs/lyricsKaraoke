@@ -23,7 +23,6 @@ class karaoke
   str:
     cntKaraoke:"#karaoke"
     lineKaraoke: "#karaoke li p"
-    cntKaraokeLyric: "#karaokeText"
     itemKaraoke: ".karaoke"
     itemKaraokePos: (pos)->
       return ".karaoke_#{pos}"
@@ -33,6 +32,7 @@ class karaoke
     scroll: 0
     pos: 0
     viewLyric: null
+    top_current: []
   #metodos
   catchDom: () ->
     self = this
@@ -55,6 +55,7 @@ class karaoke
     this.bindHtmlViewKaraoke()
     this.bindStyleHtml()
     this.suscribeEvents()
+    this.setViewLyricLayoutAction(op)
     return
   
   bindStyleHtml: () ->
@@ -100,7 +101,14 @@ class karaoke
       self.fn.timeLine(lines[l])
       l++
     return
-
+  setViewLyricLayoutAction: (op) ->
+    self = this
+    switch op
+        when "view-scroll"
+          dom.cntKaraoke.attr('class', 'view-scroll')
+        else
+          dom.cntKaraoke.attr('class', 'view-normal')
+    return
   log: (msg) ->
     console?.log msg if debug
     return
@@ -141,18 +149,18 @@ class karaoke
           console.log "libero scroll de "+pos
         else
           divCurrent = $(self.str.itemKaraokePos(pos))
-          log self._tmp
           if(self._tmp.viewLyric=="normal")
-            top = divCurrent[0].offsetTop - 80
-            dom.cntKaraoke.css('overflow','hidden')
+            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - 80
+            # dom.cntKaraoke.attr('class', 'view-normal')
           else
-            top = (divCurrent[0].offsetTop) - self._tmp.cntHeight
+            self._tmp.top_current["scroll"] = (divCurrent[0].offsetTop) - self._tmp.cntHeight
+            # dom.cntKaraoke.attr('class', 'view-scroll')
           
           console.log top
           $(self.str.itemKaraoke).removeClass('active')
           divCurrent.addClass('active')
           dom.cntKaraoke.stop(true)
-          dom.cntKaraoke.animate({scrollTop: top }, 300)
+          dom.cntKaraoke.animate({scrollTop: self._tmp.top_current[self._tmp.viewLyric] }, 300)
       else
         self._tmp.pos = pos
         self._tmp.scroll = 0

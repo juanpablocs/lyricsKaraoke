@@ -51,13 +51,8 @@ do($ = window.jQuery, window) ->
 		test: (message) ->
 			@log(@options.paramA + message)
 			return
-		setViewLyric: (op) ->
-			switch op
-				when "scroll"
-					@log "scroll"
-				else
-					@log "other"
-			@log @el
+		setViewLyricLayout: (op) ->
+			@setViewLyricLayoutAction(op)
 			return
 		createPlayer: () ->
 			self = this

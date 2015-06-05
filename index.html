@@ -16,14 +16,19 @@
 		#karaoke {
 		  width: 600px;
 		  height: 100px;
-		  overflow-y: scroll;
-		  overflow-x: hidden;
 		  border: 1px solid #ccc;
 		  margin: 10px auto;
 		  box-shadow: inset 0 0 10px #ccc;
 		  border-radius: 5px;
 		  padding: 10px;
 		  color: #888;
+		}
+		#karaoke.view-scroll{
+			overflow-y: scroll;
+		  	overflow-x: hidden;
+		}
+		#karaoke.view-normal{
+			overflow:  hidden;
 		}
 		#karaoke li {
 		  width: 98%;
@@ -127,17 +132,17 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="dist/js/lyricsKaraoke.js"></script>
 <script>
-	// $("#karaokeText").lyricsKaraoke('test', 'waaa');
 	$("#karaoke").lyricsKaraoke(
 		{
 			setFileMP3	: "src/mp3/bruno_mars_2.mp3", 
 			viewLyric:"normal", 
-			waa:"waaa",
 			onStreamingPlayer: function (e){
 				// console.log(e)
 			}
 		}
 	);
+
+	// $("#karaoke").lyricsKaraoke('setViewLyricLayout', 'view-normal');
 </script>
 </body>
 </html>
