@@ -4,7 +4,7 @@ RegExp.prototype.execAll=function(b){for(var a=null,c=[];a=this.exec(b);){var e=
 var karaoke;
 
 karaoke = (function() {
-  var debug, dom, karaokesArray, log, regexParseAll, regexParseTime, rows, version;
+  var debug, dom, karaokesArray, regexParseAll, regexParseTime, rows, version;
 
   function karaoke() {}
 
@@ -123,7 +123,7 @@ karaoke = (function() {
     }
   };
 
-  log = function(msg) {
+  karaoke.prototype.log = function(msg) {
     if (debug) {
       if (typeof console !== "undefined" && console !== null) {
         console.log(msg);
@@ -262,6 +262,17 @@ var extend = function(child, parent) { for (var key in parent) { if (hasProp.cal
 
     lyricsKaraoke.prototype.test = function(message) {
       this.log(this.options.paramA + message);
+    };
+
+    lyricsKaraoke.prototype.setViewLyric = function(op) {
+      switch (op) {
+        case "scroll":
+          this.log("scroll");
+          break;
+        default:
+          this.log("other");
+      }
+      this.log(this.el);
     };
 
     lyricsKaraoke.prototype.createPlayer = function() {

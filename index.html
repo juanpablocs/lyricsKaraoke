@@ -70,8 +70,7 @@
 
 
 <h2>Karaoke @juanpablocs21</h2>
-<div id="karaoke"></div>
-<pre id="karaokeText">
+<div id="karaoke">
 [00:00.00]
 [00:01.01]Enviado por Juan Pablo
 [00:13.32]Same bed but it feels just a little bit bigger now
@@ -123,13 +122,13 @@
 [03:16.37]When I was your man
 [03:19.42]Do all the things I should’ve done
 [03:23.99]When I was your man
-</pre>
+</div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="dist/js/lyricsKaraoke.js"></script>
 <script>
 	// $("#karaokeText").lyricsKaraoke('test', 'waaa');
-	$("#karaokeText").lyricsKaraoke(
+	$("#karaoke").lyricsKaraoke(
 		{
 			setFileMP3	: "src/mp3/bruno_mars_2.mp3", 
 			viewLyric:"normal", 

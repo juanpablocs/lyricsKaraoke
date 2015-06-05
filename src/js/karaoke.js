@@ -3,7 +3,7 @@
 var karaoke;
 
 karaoke = (function() {
-  var debug, dom, karaokesArray, log, regexParseAll, regexParseTime, rows, version;
+  var debug, dom, karaokesArray, regexParseAll, regexParseTime, rows, version;
 
   function karaoke() {}
 
@@ -122,7 +122,7 @@ karaoke = (function() {
     }
   };
 
-  log = function(msg) {
+  karaoke.prototype.log = function(msg) {
     if (debug) {
       if (typeof console !== "undefined" && console !== null) {
         console.log(msg);

@@ -101,7 +101,7 @@ class karaoke
       l++
     return
 
-  log = (msg) ->
+  log: (msg) ->
     console?.log msg if debug
     return
   fn:

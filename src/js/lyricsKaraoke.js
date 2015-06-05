@@ -54,6 +54,17 @@ var extend = function(child, parent) { for (var key in parent) { if (hasProp.cal
       this.log(this.options.paramA + message);
     };
 
+    lyricsKaraoke.prototype.setViewLyric = function(op) {
+      switch (op) {
+        case "scroll":
+          this.log("scroll");
+          break;
+        default:
+          this.log("other");
+      }
+      this.log(this.el);
+    };
+
     lyricsKaraoke.prototype.createPlayer = function() {
       var self;
       self = this;
