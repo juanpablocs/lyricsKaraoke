@@ -121,6 +121,7 @@ karaoke = (function() {
       self.fn.timeLine(lines[l]);
       l++;
     }
+    dom.cntKaraoke.html('');
   };
 
   karaoke.prototype.setViewLyricLayoutAction = function(op) {
@@ -186,7 +187,7 @@ karaoke = (function() {
       return r * 1000;
     },
     scrollTop: function(self, pos) {
-      var divCurrent;
+      var divCurrent, top;
       self._tmp.scroll++;
       if (self._tmp.pos === pos) {
         if (self._tmp.scroll > 1) {
@@ -194,16 +195,16 @@ karaoke = (function() {
         } else {
           divCurrent = $(self.str.itemKaraokePos(pos));
           if (self._tmp.viewLyric === "normal") {
-            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - 80;
+            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - divCurrent[0].offsetHeight * 2;
           } else {
             self._tmp.top_current["scroll"] = divCurrent[0].offsetTop - self._tmp.cntHeight;
           }
-          console.log(top);
+          top = self._tmp.top_current[self._tmp.viewLyric];
           $(self.str.itemKaraoke).removeClass('active');
           divCurrent.addClass('active');
           dom.cntKaraoke.stop(true);
           dom.cntKaraoke.animate({
-            scrollTop: self._tmp.top_current[self._tmp.viewLyric]
+            scrollTop: top
           }, 300);
         }
       } else {

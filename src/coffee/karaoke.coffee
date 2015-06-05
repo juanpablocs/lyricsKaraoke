@@ -56,6 +56,7 @@ class karaoke
     this.bindStyleHtml()
     this.suscribeEvents()
     this.setViewLyricLayoutAction(op)
+    
     return
   
   bindStyleHtml: () ->
@@ -100,6 +101,7 @@ class karaoke
     while l < lines.length
       self.fn.timeLine(lines[l])
       l++
+    dom.cntKaraoke.html('')
     return
   setViewLyricLayoutAction: (op) ->
     self = this
@@ -150,17 +152,16 @@ class karaoke
         else
           divCurrent = $(self.str.itemKaraokePos(pos))
           if(self._tmp.viewLyric=="normal")
-            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - 80
-            # dom.cntKaraoke.attr('class', 'view-normal')
+            # self._tmp.top_current["normal"] = divCurrent[0].offsetTop - 80
+            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - divCurrent[0].offsetHeight*2
           else
             self._tmp.top_current["scroll"] = (divCurrent[0].offsetTop) - self._tmp.cntHeight
-            # dom.cntKaraoke.attr('class', 'view-scroll')
           
-          console.log top
+          top = self._tmp.top_current[self._tmp.viewLyric]
           $(self.str.itemKaraoke).removeClass('active')
           divCurrent.addClass('active')
           dom.cntKaraoke.stop(true)
-          dom.cntKaraoke.animate({scrollTop: self._tmp.top_current[self._tmp.viewLyric] }, 300)
+          dom.cntKaraoke.animate({scrollTop: top }, 300)
       else
         self._tmp.pos = pos
         self._tmp.scroll = 0
