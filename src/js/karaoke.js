@@ -17,7 +17,7 @@ karaoke = (function() {
 
   dom = {};
 
-  rows = 3;
+  rows = 10;
 
   debug = true;
 
@@ -195,16 +195,17 @@ karaoke = (function() {
         } else {
           divCurrent = $(self.str.itemKaraokePos(pos));
           if (self._tmp.viewLyric === "normal") {
-            self._tmp.top_current["normal"] = divCurrent[0].offsetTop - (divCurrent.outerHeight() + 20);
+            self._tmp.top_current["normal"] = parseInt(divCurrent[0].offsetTop - (divCurrent.outerHeight() + 40));
           } else {
             self._tmp.top_current["scroll"] = divCurrent[0].offsetTop - self._tmp.cntHeight;
           }
           top = self._tmp.top_current[self._tmp.viewLyric];
+          console.log(top);
           $(self.str.itemKaraoke).removeClass('active');
           divCurrent.addClass('active');
-          dom.cntKaraoke.stop(true);
           dom.cntKaraoke.animate({
-            scrollTop: top
+            scrollTop: top,
+            queue: true
           }, 300);
         }
       } else {
