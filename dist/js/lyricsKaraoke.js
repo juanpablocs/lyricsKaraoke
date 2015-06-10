@@ -76,7 +76,9 @@ karaoke = (function() {
     self._tmp.cntHeight = self._tmp.lineHeight * rows;
     dom.cntKaraoke.animate({
       height: self._tmp.cntHeight + "px"
-    }, 500);
+    }, 500, function() {
+      return $(this).css('position', 'relative');
+    });
   };
 
   karaoke.prototype.bindHtmlViewKaraoke = function() {
@@ -188,15 +190,16 @@ karaoke = (function() {
       return r * 1000;
     },
     scrollTop: function(self, pos) {
-      var divCurrent, top;
+      var divCurrent, paddingTop, top;
       self._tmp.scroll++;
       if (self._tmp.pos === pos) {
         if (self._tmp.scroll > 1) {
           console.log("libero scroll de " + pos);
         } else {
           divCurrent = $(self.str.itemKaraokePos(pos));
+          paddingTop = 10;
           if (self._tmp.viewLyric === "normal") {
-            self._tmp.top_current["normal"] = parseInt(dom.cntKaraoke.scrollTop() + (divCurrent.position().top - divCurrent.outerHeight() * 2));
+            self._tmp.top_current["normal"] = parseInt(dom.cntKaraoke.scrollTop() + divCurrent.position().top - (dom.cntKaraoke.height() / 2) + (divCurrent.height() / 2));
           } else {
             self._tmp.top_current["scroll"] = divCurrent[0].offsetTop - self._tmp.cntHeight;
           }

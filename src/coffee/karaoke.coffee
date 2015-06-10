@@ -64,7 +64,10 @@ class karaoke
     self.catchDom()
     self._tmp.lineHeight = dom.lineKaraoke.outerHeight()
     self._tmp.cntHeight = self._tmp.lineHeight*rows
-    dom.cntKaraoke.animate({height: self._tmp.cntHeight+"px" },500)
+    dom.cntKaraoke.animate({height: self._tmp.cntHeight+"px" },500, ()->
+      $(@).css('position', 'relative')
+    )
+
     return
   bindHtmlViewKaraoke: () ->
     self = this
@@ -151,11 +154,13 @@ class karaoke
           console.log "libero scroll de "+pos
         else
           divCurrent = $(self.str.itemKaraokePos(pos))
+          paddingTop = 10
+          # http://stackoverflow.com/a/5267018
           if(self._tmp.viewLyric=="normal")
-            # self._tmp.top_current["normal"] = divCurrent.offset().top
-            # t = $(self.str.cntKaraoke)[0].scrollHeight - $(self.str.cntKaraoke)[0].clientHeight
-            # self._tmp.top_current["normal"] = parseInt(divCurrent[0].offsetTop - (divCurrent.outerHeight()+80))
-            self._tmp.top_current["normal"] = parseInt(dom.cntKaraoke.scrollTop() + (divCurrent.position().top-divCurrent.outerHeight()*2))
+            # top
+            # self._tmp.top_current["normal"] = parseInt(dom.cntKaraoke.scrollTop() + (divCurrent.position().top - paddingTop) )
+            # center
+            self._tmp.top_current["normal"] = parseInt(dom.cntKaraoke.scrollTop() + divCurrent.position().top - (dom.cntKaraoke.height()/2) + (divCurrent.height()/2)  )
           else
             self._tmp.top_current["scroll"] = (divCurrent[0].offsetTop) - self._tmp.cntHeight
           
