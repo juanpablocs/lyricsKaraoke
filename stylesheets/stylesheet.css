@@ -257,6 +257,7 @@ a {
   padding: 10px 0;
   margin-bottom: 25px;
   visibility: hidden;
+  position: relative;
 }
 
 #karaoke.view-scroll{
